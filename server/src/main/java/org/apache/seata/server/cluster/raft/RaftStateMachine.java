@@ -366,7 +366,7 @@ public class RaftStateMachine extends StateMachineAdapter {
                     Integer.parseInt(
                         ((Environment)ObjectHolder.INSTANCE.getObject(OBJECT_KEY_SPRING_CONFIGURABLE_ENVIRONMENT))
                             .getProperty("server.port", String.valueOf(7091))),
-                    group, Collections.emptyMap());
+                    group, new HashMap<>());
             leader.setRole(ClusterRole.LEADER);
             raftClusterMetadata.setLeader(leader);
         }
@@ -406,7 +406,7 @@ public class RaftStateMachine extends StateMachineAdapter {
                     Integer.parseInt(
                         ((Environment)ObjectHolder.INSTANCE.getObject(OBJECT_KEY_SPRING_CONFIGURABLE_ENVIRONMENT))
                             .getProperty("server.port", String.valueOf(7091))),
-                    group, Collections.emptyMap());
+                    group, new HashMap<>());
                 InvokeContext invokeContext = new InvokeContext();
                 PutNodeMetadataRequest putNodeInfoRequest = new PutNodeMetadataRequest(node);
                 Configuration configuration = RouteTable.getInstance().getConfiguration(group);
