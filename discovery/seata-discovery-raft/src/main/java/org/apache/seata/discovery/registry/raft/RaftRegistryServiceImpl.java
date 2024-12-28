@@ -41,6 +41,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.seata.common.ConfigurationKeys;
 import org.apache.seata.common.exception.AuthenticationFailedException;
+import org.apache.seata.common.exception.NotSupportYetException;
 import org.apache.seata.common.exception.ParseEndpointException;
 import org.apache.seata.common.exception.RetryableException;
 import org.apache.seata.common.metadata.Metadata;
@@ -320,6 +321,8 @@ public class RaftRegistryServiceImpl implements RegistryService<ConfigChangeList
                     return new InetSocketAddress(node.getControl().getHost(), node.getControl().getPort());
                 case "transaction":
                     return new InetSocketAddress(node.getTransaction().getHost(), node.getTransaction().getPort());
+                 default:
+                     throw new NotSupportYetException("SelectEndpoint is not support type: " + type);
             }
         }
         Node.ExternalEndpoint externalEndpoint = selectExternalEndpoint(node, PREFERRED_NETWORKS.split(";"));
@@ -328,8 +331,9 @@ public class RaftRegistryServiceImpl implements RegistryService<ConfigChangeList
                 return new InetSocketAddress(externalEndpoint.getHost(), externalEndpoint.getControlPort());
             case "transaction":
                 return new InetSocketAddress(externalEndpoint.getHost(), externalEndpoint.getTransactionPort());
+            default:
+                throw new NotSupportYetException("SelectEndpoint is not support type: " + type);
         }
-        throw new ParseEndpointException("Select endpoint is fail.");
     }
 
     private static Node.ExternalEndpoint selectExternalEndpoint(Node node, String[] preferredNetworks) {
