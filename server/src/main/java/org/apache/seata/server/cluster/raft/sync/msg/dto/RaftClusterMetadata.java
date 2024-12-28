@@ -21,11 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.seata.common.holder.ObjectHolder;
 import org.apache.seata.common.metadata.Node;
 import org.apache.seata.common.util.StringUtils;
-import org.apache.seata.config.ConfigurationFactory;
 import org.apache.seata.core.protocol.Version;
-import static org.apache.seata.common.ConfigurationKeys.SERVER_REGISTRY_METADATA_EXTERNAL;
+import org.springframework.core.env.ConfigurableEnvironment;
+import static org.apache.seata.common.Constants.OBJECT_KEY_SPRING_CONFIGURABLE_ENVIRONMENT;
 
 /**
  */
@@ -42,8 +43,6 @@ public class RaftClusterMetadata implements Serializable {
     private long term;
 
     public RaftClusterMetadata() {
-        System.setProperty("SERVER_REGISTRY_METADATA_EXTERNAL_VALUE", ConfigurationFactory.getInstance()
-                .getConfig(SERVER_REGISTRY_METADATA_EXTERNAL));
     }
 
     public RaftClusterMetadata(long term) {
@@ -58,7 +57,8 @@ public class RaftClusterMetadata implements Serializable {
         node.setGroup(group);
         node.setVersion(Version.getCurrent());
         node.setInternal(node.createEndpoint(host, internalPort, "raft"));
-        String serverRegistryMetadataExternalValue = System.getProperty("SERVER_REGISTRY_METADATA_EXTERNAL_VALUE");
+        ConfigurableEnvironment environment= (ConfigurableEnvironment) ObjectHolder.INSTANCE.getObject(OBJECT_KEY_SPRING_CONFIGURABLE_ENVIRONMENT);
+        String serverRegistryMetadataExternalValue = environment.resolvePlaceholders("${registry.metadata.external:${seata.registry.metadata.external:}}");
         if (metadata != null && StringUtils.isNotEmpty(serverRegistryMetadataExternalValue)) {
             node.updateMetadataWithExternalEndpoints(metadata, node.createExternalEndpoints(serverRegistryMetadataExternalValue));
         }

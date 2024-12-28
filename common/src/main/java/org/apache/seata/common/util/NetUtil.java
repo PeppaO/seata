@@ -97,6 +97,19 @@ public class NetUtil {
     }
 
     /**
+     * To string host string.
+     *
+     * @param address the address
+     * @return the string
+     */
+    public static String toStringHost(InetSocketAddress address) {
+        if (address.getAddress() == null) {
+            return address.getHostString();
+        }
+        return address.getAddress().getHostAddress();
+    }
+
+    /**
      * To inet socket address inet socket address.
      *
      * @param address the address
