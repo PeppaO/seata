@@ -314,7 +314,7 @@ public class RaftRegistryServiceImpl implements RegistryService<ConfigChangeList
 
     private static InetSocketAddress selectEndpoint(String type, Node node) {
         if (StringUtils.isBlank(PREFERRED_NETWORKS)) {
-            // 采取默认的方式，直接使用node.control  node.transaction
+            // Use the default method, directly using node.control and node.transaction
             switch (type) {
                 case "control":
                     return new InetSocketAddress(node.getControl().getHost(), node.getControl().getPort());
