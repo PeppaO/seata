@@ -301,7 +301,7 @@ public class RaftRegistryServiceImpl implements RegistryService<ConfigChangeList
     }
 
     private static String selectTransactionEndpointStr(Node node) {
-        InetSocketAddress transaction = selectTransactionEndpoint( node);
+        InetSocketAddress transaction = selectTransactionEndpoint(node);
         return NetUtil.toStringAddress(transaction);
     }
 
@@ -321,8 +321,8 @@ public class RaftRegistryServiceImpl implements RegistryService<ConfigChangeList
                     return new InetSocketAddress(node.getControl().getHost(), node.getControl().getPort());
                 case "transaction":
                     return new InetSocketAddress(node.getTransaction().getHost(), node.getTransaction().getPort());
-                 default:
-                     throw new NotSupportYetException("SelectEndpoint is not support type: " + type);
+                default:
+                    throw new NotSupportYetException("SelectEndpoint is not support type: " + type);
             }
         }
         Node.ExternalEndpoint externalEndpoint = selectExternalEndpoint(node, PREFERRED_NETWORKS.split(";"));
