@@ -19,9 +19,11 @@ package org.apache.seata.common.metadata;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.seata.common.exception.ParseEndpointException;
-
-import java.util.*;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Node {
 
@@ -221,7 +223,6 @@ public class Node {
     }
 
     public Map<String, Object> updateMetadataWithExternalEndpoints(Map<String, Object> metadata, List<Node.ExternalEndpoint> externalEndpoints) {
-        Collections.emptyMap();
         Object obj = metadata.get("external");
         if (obj == null) {
             if (!externalEndpoints.isEmpty()) {
