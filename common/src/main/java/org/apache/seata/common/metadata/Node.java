@@ -20,11 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.seata.common.exception.ParseEndpointException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 
 public class Node {
@@ -208,15 +204,11 @@ public class Node {
 
         for (String s : split) {
             String[] item = s.split(":");
-            if (item.length == 4) {
+            if (item.length == 3) {
                 try {
-                    String seataHostName = item[0];
-                    String host = item[1];
-                    int controllerPort = Integer.parseInt(item[2]);
-                    int transactionPort = Integer.parseInt(item[3]);
-                    if (!seataHostName.equals(System.getenv("SEATA_HOST_NAME"))) {
-                        continue;
-                    }
+                    String host = item[0];
+                    int controllerPort = Integer.parseInt(item[1]);
+                    int transactionPort = Integer.parseInt(item[2]);
                     externalEndpoints.add(createExternalEndpoint(host, controllerPort, transactionPort));
                 } catch (NumberFormatException e) {
                     throw new ParseEndpointException("Invalid port number in: " + s);
@@ -228,18 +220,21 @@ public class Node {
         return externalEndpoints;
     }
 
-    public void updateMetadataWithExternalEndpoints(Map<String, Object> metadata, List<Node.ExternalEndpoint> externalEndpoints) {
+    public Map<String, Object> updateMetadataWithExternalEndpoints(Map<String, Object> metadata, List<Node.ExternalEndpoint> externalEndpoints) {
+        Collections.emptyMap();
         Object obj = metadata.get("external");
         if (obj == null) {
             if (!externalEndpoints.isEmpty()) {
-                metadata.put("external", externalEndpoints);
-                return;
+                Map<String, Object> metadataMap = new HashMap<>(metadata);
+                metadataMap.put("external", externalEndpoints);
+                return metadataMap;
             }
-            return;
+            return metadata;
         }
         if (obj instanceof List) {
             List<Node.ExternalEndpoint> oldList = (List<Node.ExternalEndpoint>) obj;
             oldList.addAll(externalEndpoints);
+            return metadata;
         } else {
             throw new ParseEndpointException("Metadata 'external' is not a List.");
         }

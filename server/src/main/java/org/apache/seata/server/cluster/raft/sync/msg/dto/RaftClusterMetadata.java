@@ -58,11 +58,15 @@ public class RaftClusterMetadata implements Serializable {
         node.setVersion(Version.getCurrent());
         node.setInternal(node.createEndpoint(host, internalPort, "raft"));
         ConfigurableEnvironment environment = (ConfigurableEnvironment) ObjectHolder.INSTANCE.getObject(OBJECT_KEY_SPRING_CONFIGURABLE_ENVIRONMENT);
-        String serverRegistryMetadataExternalValue = environment.resolvePlaceholders("${registry.metadata.external:${seata.registry.metadata.external:}}");
-        if (metadata != null && StringUtils.isNotEmpty(serverRegistryMetadataExternalValue)) {
-            node.updateMetadataWithExternalEndpoints(metadata, node.createExternalEndpoints(serverRegistryMetadataExternalValue));
+        String seataRegistryMetadataExternalValue = environment.resolvePlaceholders("${SEATA_REGISTRY_METADATA_EXTERNAL:${seata.registry.metadata.external:}}");
+        if (metadata != null) {
+            if (StringUtils.isNotEmpty(seataRegistryMetadataExternalValue)) {
+                Map<String, Object> newMetadata = node.updateMetadataWithExternalEndpoints(metadata, node.createExternalEndpoints(seataRegistryMetadataExternalValue));
+                Optional.ofNullable(newMetadata).ifPresent(node::setMetadata);
+            } else {
+                node.setMetadata(metadata);
+            }
         }
-        Optional.ofNullable(metadata).ifPresent(node::setMetadata);
         return node;
     }
 
